@@ -1,78 +1,78 @@
-# Audio Compression Estimates
+# Perkiraan Kompresi Audio (Estimasi Terukur)
 
-Source: measured on sample audio stored in `storage/app/public/audio/7/77` (sample file: 1778590343_6a0322870a8ab.mp3)
+Sumber: pengukuran pada sample audio di `storage/app/public/audio/7/77` (file contoh: `1778590343_6a0322870a8ab.mp3`)
 
-- Sample duration: **104.01 seconds**
-- Measured sizes (bytes):
-  - Original MP3: **2,031,123 bytes**
-  - Opus (64 kbps): **1,104,339 bytes**
-  - Opus (32 kbps): **688,131 bytes**
-  - Opus (16 kbps): **242,179 bytes**
+- Durasi sample: **104.01 detik**
+- Ukuran terukur (bytes):
+  - Original MP3: **2.031.123 bytes**
+  - Opus (64 kbps): **1.104.339 bytes**
+  - Opus (32 kbps): **688.131 bytes**
+  - Opus (16 kbps): **242.179 bytes**
 
 ---
 
-## Per-minute averages (measured)
-Derived by scaling the measured bytes to 60 seconds from the 104.01s sample.
+## Rata-rata per-menit (terukur)
+Nilai dihitung dengan menskalakan ukuran terukur ke 60 detik dari sample 104.01 detik.
 
-| Format / Bitrate | Bytes / min | KiB / min | MB / min |
+| Format / Bitrate | Bytes / menit | KiB / menit | MB / menit |
 |---|---:|---:|---:|
-| Original MP3 (~156 kbps) | 1,171,689 | 1,144.2 | 1.12 |
-| Opus 64 kbps | 637,057 | 622.1 | 0.61 |
-| Opus 32 kbps | 396,960 | 387.7 | 0.38 |
-| Opus 16 kbps | 139,705 | 136.4 | 0.13 |
+| Original MP3 (~156 kbps) | 1.171.689 | 1.144,2 | 1,12 |
+| Opus 64 kbps | 637.057 | 622,1 | 0,61 |
+| Opus 32 kbps | 396.960 | 387,7 | 0,38 |
+| Opus 16 kbps | 139.705 | 136,4 | 0,13 |
 
 ---
 
-## Estimated sizes for common durations (real measured scaling)
-| Duration | Original MP3 (~156 kbps) | Opus 64 kbps | Opus 32 kbps | Opus 16 kbps |
+## Perkiraan ukuran untuk durasi umum (skala terukur)
+| Durasi | Original MP3 (~156 kbps) | Opus 64 kbps | Opus 32 kbps | Opus 16 kbps |
 |---:|---:|---:|---:|---:|
-| 1 minute (60s) | 1.12 MB | 0.61 MB | 0.38 MB | 0.13 MB |
-| 1m 24s (84s) | 1.57 MB | 0.86 MB | 0.54 MB | 0.18 MB |
-| 5 minutes (300s) | 5.60 MB | 3.05 MB | 1.90 MB | 0.66 MB |
-| 10 minutes (600s) | 11.20 MB | 6.10 MB | 3.80 MB | 1.32 MB |
+| 1 menit (60s) | 1,12 MB | 0,61 MB | 0,38 MB | 0,13 MB |
+| 1m 24s (84s) | 1,57 MB | 0,86 MB | 0,54 MB | 0,18 MB |
+| 5 menit (300s) | 5,60 MB | 3,05 MB | 1,90 MB | 0,66 MB |
+| 10 menit (600s) | 11,20 MB | 6,10 MB | 3,80 MB | 1,32 MB |
 
-> Note: values are scaled linearly from the measured sample. Container and metadata overhead already reflected in the measurements.
+> Catatan: nilai ini diskalakan secara linier dari sample terukur. Overhead container dan metadata sudah tercermin di pengukuran.
 
 ---
 
-## Scalability example (1000 users)
-Assumptions:
-- 1000 active users
-- 2.5 recordings per user per day (average)
-- Average recording duration: 1.5 minutes (90s)
-- 30 days per month
+## Contoh skenario skalabilitas (1000 pengguna)
+Asumsi baru sesuai permintaan:
+- 1000 pengguna aktif
+- 3 rekaman per pengguna per hari
+- Durasi rata-rata per rekaman: **2 menit**
+- 30 hari per bulan
 
-Total recordings per month = 1000 × 2.5 × 30 = **75,000 recordings**
+Total rekaman per bulan = 1000 × 3 × 30 = **90.000 rekaman**
 
-Per-record average (MB) = (MB / min) × 1.5
-- Original MP3: 1.12 × 1.5 = **1.68 MB / recording**
-- Opus 16 kbps: 0.13 × 1.5 = **0.195 MB / recording**
+Per-rekam (MB) = (MB / menit) × 2
+- Original MP3: 1,12 × 2 = **2,24 MB / rekaman**
+- Opus 16 kbps: 0,13 × 2 = **0,26 MB / rekaman**
 
-Monthly storage estimate:
+Perkiraan storage bulanan:
 
-| Scenario | Per-record (MB) | Total recordings | Total storage (MB) | Total storage (GB) |
+| Skenario | Per-rekam (MB) | Total rekaman | Total storage (MB) | Total storage (GB) |
 |---|---:|---:|---:|---:|
-| Original MP3 (no compression) | 1.68 | 75,000 | 126,000 | 123.05 GB |
-| Opus 16 kbps (browser-record + low-bitrate server compress) | 0.195 | 75,000 | 14,625 | 14.29 GB |
+| Original MP3 (tanpa kompresi) | 2,24 | 90.000 | 201.600 | 196,88 GB |
+| Opus 16 kbps (rekaman browser + kompresi rendah di server) | 0,26 | 90.000 | 23.400 | 22,85 GB |
 
-Estimated savings: **~108.8 GB per month** (~88% reduction) compared to storing original MP3s.
-
----
-
-## Observations & Recommendations
-- Client-side recording at `audioBitsPerSecond: 16000` (Opus 16 kbps) gives the largest storage and bandwidth wins and avoids server CPU cost for many recordings.
-- For manual uploads (MP3/WAV), keep the server-side `CompressAudioJob` with audio-only mapping (`-map 0:a:0 -vn -sn -dn`) to handle embedded cover art and produce predictable WebM/Opus outputs.
-- Set `AUDIO_COMPRESSION_BITRATE` in `.env` to tune trade-offs; 16 kbps is an excellent default for voice-only content.
-- Add 10–20% buffer to capacity planning for metadata/overhead and usage spikes.
+Perkiraan penghematan: **~174,03 GB per bulan** (~88,5% pengurangan) dibanding menyimpan MP3 asli.
 
 ---
 
-## Reproduce the per-minute calculation (example command)
-Run these (PowerShell) snippets locally to reproduce the per-minute scaling we used here (replace variables with real measured sizes/duration):
+## Pengamatan & Rekomendasi
+- Rekaman di sisi klien dengan `audioBitsPerSecond: 16000` (Opus 16 kbps) memberikan penghematan storage dan bandwidth terbesar, serta mengurangi beban CPU server.
+- Untuk upload manual (MP3/WAV), tetap gunakan `CompressAudioJob` di server dengan pemetaan audio-only (`-map 0:a:0 -vn -sn -dn`) agar cover art tidak memecahkan proses transcode dan hasilnya konsisten (WebM/Opus).
+- Atur `AUDIO_COMPRESSION_BITRATE` di `.env` untuk menyesuaikan trade-off kualitas/ukuran; 16 kbps sangat baik untuk konten suara saja.
+- Tambahkan buffer 10–20% untuk kapasitas produksi untuk mengakomodasi metadata dan lonjakan penggunaan.
+
+---
+
+## Cara mereproduksi per-menit (contoh perintah)
+Jalankan snippet PowerShell berikut untuk mereproduksi skala per-menit dari pengukuran (ganti variabel dengan ukuran/durasi terukur Anda):
 
 ```powershell
 $durationSec = 104.01
-$sizeBytes = 242179 # example for opus 16kbps
+$sizeBytes = 242179 # contoh untuk opus 16kbps
 $perMin = ($sizeBytes / $durationSec) * 60
 $kbPerMin = $perMin / 1024
 $mbPerMin = $perMin / 1024 / 1024
@@ -81,4 +81,4 @@ Write-Output "$perMin bytes/min = $kbPerMin KiB/min = $mbPerMin MB/min"
 
 ---
 
-Generated by the HifzhCare diagnostics run on 2026-05-12. See `app/Jobs/CompressAudioJob.php` for the conversion pipeline used in tests.
+Dihasilkan dari sesi diagnostik HifzhCare pada 2026-05-12. Lihat `app/Jobs/CompressAudioJob.php` untuk pipeline konversi yang digunakan dalam pengujian.
